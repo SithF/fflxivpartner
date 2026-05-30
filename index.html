@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FFLogs 对位搭档统计</title>
+  <title>谁是你的最佳搭档？</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <style>
     :root {
@@ -650,13 +650,46 @@
     }
 
   </style>
+  <style>
+    .disclaimer-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .disclaimer-box {
+      background: #fff; border-radius: 12px;
+      padding: 28px 24px 22px;
+      max-width: 420px; width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .disclaimer-box h2 { margin: 0 0 14px; font-size: 17px; color: var(--ink); }
+    .disclaimer-box p { margin: 0 0 20px; font-size: 14px; color: #4a5568; line-height: 1.75; }
+    .disclaimer-box button {
+      width: 100%; min-height: 44px;
+      background: var(--brand); color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+    }
+    .disclaimer-box button:hover { background: var(--brand-strong); }
+  </style>
 </head>
 <body>
+  <div id="disclaimer-overlay" class="disclaimer-overlay">
+    <div class="disclaimer-box">
+      <h2>⚠️ 使用前请阅读</h2>
+      <p>数据来源于 FFLogs，评分仅供娱乐参考，毫无科学依据——请勿上纲上线或用于评判他人。</p>
+      <button onclick="document.getElementById('disclaimer-overlay').remove()">我已了解，进入工具</button>
+    </div>
+  </div>
   <div id="app" class="app">
     <header class="topbar">
       <div class="brand">
-        <h1>FFLogs 对位搭档统计</h1>
-        <p>输入角色主页和 API 凭据，统计历史战报里与你并肩出现的治疗搭档。</p>
+        <h1>谁是你的最佳搭档？</h1>
+        <p>你和谁搭档最多？打了多少本？表现怎么样？输入角色ID，从 FFLogs 战报里找到答案。</p>
+        <div class="hint-box" style="margin-top:10px;font-size:13px;line-height:1.7;color:var(--accent);">
+          目前仅支持治疗职业查询<br>评分仅供娱乐参考，毫无科学依据——请勿上纲上线或用于评判他人
+        </div>
       </div>
       <nav class="steps" aria-label="流程">
         <span class="step-pill" :class="{ active: view === 'setup' }">1 设置</span>
@@ -968,8 +1001,8 @@
                   <!-- <div class="bp-qr-placeholder">扫码<br>查看</div> -->
                 </div>
                 <div class="bp-qr-text">
-                  <strong>扫码查看完整统计</strong>
-                  在 FFLogs 搭档统计工具中查看你的对位搭档排行榜
+                  <strong>扫码查询</strong>
+                  谁是你的最佳搭档？
                 </div>
               </div>
             </div>
