@@ -317,10 +317,22 @@
       color: var(--ink);
       text-align: left;
       display: grid;
-      grid-template-columns: minmax(220px, 1.3fr) repeat(4, minmax(120px, 1fr));
+      grid-template-columns: minmax(220px, 1.3fr) repeat(4, minmax(120px, 1fr)) 24px;
       gap: 12px;
       align-items: center;
+      cursor: pointer;
+      transition: background 0.15s;
     }
+    .partner-summary:hover { background: #f5faf8; }
+    .partner-expand-icon {
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+    .partner-expand-icon.open { transform: rotate(180deg); }
 
     .partner-title strong { display: block; font-size: 18px; line-height: 1.25; }
     .partner-title span, .metric span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; line-height: 1.35; }
@@ -898,17 +910,17 @@
           <span class="rank-mode-label">排名% 计算方式：</span>
           <div class="rank-mode-toggle">
             <button :class="['rank-mode-btn', rankMode === 'today' && 'active']" @click="rankMode = 'today'">
-              Today's % <span class="rank-mode-hint">全量记录，与当前排行榜对比</span>
+              Today's % <span class="rank-mode-hint">今日排名</span>
             </button>
             <button :class="['rank-mode-btn', rankMode === 'hist' && 'active']" @click="rankMode = 'hist'">
-              Hist. % <span class="rank-mode-hint">按打榜时的历史快照计算</span>
+              Hist. % <span class="rank-mode-hint">历史排名</span>
             </button>
           </div>
-          <span class="rank-footnote-inline">部分记录因 API 无数据显示"—"</span>
+          
         </div>
 
         <div class="toolbar">
-          <h2 class="section-title">搭档排行榜</h2>
+          <h2 class="section-title">搭档一览</h2>
           <div class="field">
             <select v-model="sortKey" aria-label="排序">
               <option value="totalScore">按综合评分</option>
@@ -1034,6 +1046,7 @@
               <div class="metric"><strong>{{ formatNumber(partner.bestCombinedRdps) }}</strong><span>合计最高 rDPS</span></div>
               <div class="metric"><strong :class="parseColorClass(partnerCombinedRank(partner, 'best'))">{{ formatPercent(partnerCombinedRank(partner, "best")) }}</strong><span>治疗合计输出最高排名%</span></div>
               <div class="metric"><strong :class="parseColorClass(partnerCombinedRank(partner, 'avg'))">{{ formatPercent(partnerCombinedRank(partner, "avg")) }}</strong><span>治疗合计输出平均排名%</span></div>
+              <span class="partner-expand-icon" :class="{ open: expandedPartners.has(partner.key) }">▼</span>
             </button>
             <div v-if="expandedPartners.has(partner.key)" class="records">
               <table>
