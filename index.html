@@ -919,6 +919,19 @@
           
         </div>
 
+        <div v-if="selectedJobTypes.length > 1" class="rank-mode-bar" style="margin-top:8px;">
+          <span class="rank-mode-label">最佳搭档卡片展示职业：</span>
+          <div class="rank-mode-toggle">
+            <button v-for="job in selectedJobTypes" :key="job"
+              :class="['rank-mode-btn', primarySelectedJob === job && 'active']"
+              @click="cardJob = job"
+              style="display:flex;align-items:center;gap:5px;">
+              <img v-if="jobIcon(job)" :src="jobIcon(job)" :alt="displayJob(job)" style="width:16px;height:16px;border-radius:3px;flex-shrink:0;" />
+              {{ displayJob(job) }}
+            </button>
+          </div>
+        </div>
+
         <div class="toolbar">
           <h2 class="section-title">搭档一览</h2>
           <div class="field">
@@ -1214,7 +1227,8 @@
           sortKey: "totalScore",
           analyzedFightCount: 0,
           rankMode: "today",  // "today" = report.rankings rankPercent | "hist" = encounterRankings historicalPercent
-          settingsSaved: false
+          settingsSaved: false,
+          cardJob: ""
         };
       },
       computed: {
@@ -1226,6 +1240,7 @@
           return roles.length === 1 ? roles[0] : (roles.length > 1 ? roles[0] : '');
         },
         primarySelectedJob() {
+          if (this.cardJob) return this.cardJob;
           return this.selectedJobTypes.length ? this.selectedJobTypes[0] : this.selectedJobType;
         },
         zonesWithEncounters() {
@@ -1580,6 +1595,17 @@
             this.view = "loading";
             await this.fetchAllZoneRankings();
             this.finalizePartners();
+            // 默认展示使用次数最多的职业
+            if (this.selectedJobTypes.length > 1) {
+              const countByJob = {};
+              for (const p of Object.values(this.partners)) {
+                for (const r of p.records) {
+                  const j = r.self?.jobType;
+                  if (j) countByJob[j] = (countByJob[j] || 0) + 1;
+                }
+              }
+              this.cardJob = this.selectedJobTypes.reduce((a, b) => (countByJob[a] || 0) >= (countByJob[b] || 0) ? a : b);
+            }
             this.view = "results";
           } catch (err) {
             this.error = this.readableError(err);
